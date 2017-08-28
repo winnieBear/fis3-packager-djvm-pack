@@ -291,14 +291,14 @@ var layoutMap = {};
 var mergedMap = {};
 
 function packPage(ret, fileId) {
-  console.log('packPage %s', fileId);
+  // console.log('packPage %s', fileId);
   var isLayout;
   if (/^page\/layout\/(?:.+)/.test(fileId)) {
     isLayout = true;
   }
 
   if (isLayout && hasPackedPage[ fileId ]) {
-    console.log('%s has packed！', fileId);
+    // console.info('%s has packed！', fileId);
     return;
   }
 
@@ -348,13 +348,13 @@ function packPage(ret, fileId) {
     }
   });
 
-  console.log('%s depend Layout:%s', fileId, depLayout || 'none');
+  // console.log('%s depend Layout:%s', fileId, depLayout || 'none');
   if (depLayout) {
     arrRequire.splice(layoutInd, 1);
     if (!hasPackedPage[ depLayout ]) {
       packPage(ret, depLayout);
     } else {
-      console.log('%s has packed！', depLayout);
+      // console.log('%s has packed！', depLayout);
     }
 
     if (layoutMap[ depLayout ]) {
@@ -401,7 +401,7 @@ function packPage(ret, fileId) {
   deps[ 'js' ] = extend(true, deps[ 'js' ], res[ 'deps' ][ 'js' ]);
   deps[ 'css' ] = extend(true, deps[ 'css' ], res[ 'deps' ][ 'css' ]);
 
-  console.log('%s deps:%s', fileId, JSON.stringify(deps, null, 4));
+  // console.log('%s deps:%s', fileId, JSON.stringify(deps, null, 4));
 
   // 替换/合成文件，替换占位符
   // arrRequires,arrLink,arrAsync
@@ -471,7 +471,7 @@ function getPackUrl(env, arrRes, resType, packFilePath, ret) {
     uri = createPkg(arrRes, packFilePath, ret);
     strPackUrl = parseTmpl(options['templates'][ resType ], { src: uri, attributes: resType === 'css' ? 'rel="stylesheet"' : '' });
   }
-  console.log('pack url: %s', strPackUrl);
+  // console.log('pack url: %s', strPackUrl);
   return strPackUrl;
 }
 
@@ -632,7 +632,7 @@ module.exports = function (ret, pack, settings, opt) {
 
   });
 
-  console.log('layoutMap:%s', JSON.stringify(layoutMap, null, 4));
-  console.log('mergedMap:%s', JSON.stringify(mergedMap, null, 4));
+  // console.log('layoutMap:%s', JSON.stringify(layoutMap, null, 4));
+  // console.log('mergedMap:%s', JSON.stringify(mergedMap, null, 4));
 };
 
