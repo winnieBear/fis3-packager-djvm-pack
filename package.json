@@ -1,6 +1,6 @@
 {
   "name": "fis3-packager-djvm-pack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "fis3-packager-djvm-pack",
   "main": "index.js",
   "scripts": {
