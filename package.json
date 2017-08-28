@@ -1,19 +1,22 @@
 {
-  "name": "fis3-packager-deps-pack",
-  "version": "0.0.2",
-  "description": "Pack resource include dependencies.",
+  "name": "fis3-packager-djvm-pack",
+  "version": "0.1.0",
+  "description": "fis3-packager-djvm-pack",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fex-team/fis3-packager-deps-pack.git"
+    "url": "git+https://github.com/winnieBear/fis3-packager-djvm-pack.git"
   },
-  "author": "fis",
-  "license": "BSD",
+  "keywords": [
+    "fis3-packager-djvm-pack"
+  ],
+  "author": "fengyang321@gmail.com",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fex-team/fis3-packager-deps-pack/issues"
+    "url": "https://github.com/winnieBear/fis3-packager-djvm-pack/issues"
   },
-  "homepage": "https://github.com/fex-team/fis3-packager-deps-pack"
+  "homepage": "https://github.com/winnieBear/fis3-packager-djvm-pack#readme"
 }

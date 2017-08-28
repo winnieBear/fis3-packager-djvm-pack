@@ -10,13 +10,17 @@ var options = {
   placeholder: {
     'css': '__$MERGE_CSS$__',
     'js': '__$MERGE_JS$__'
+  },
+  templates: {
+    'js': '<script $attributes$ src="$src$"></script>',
+    'css': '<link $attributes$ href="$src$">'
   }
 }
 
 Array.prototype.pushUnique = Array.prototype.pushUnique || function (item) {
   if (this.indexOf(item) == -1) {
-      this.push(item);
-      return true;
+    this.push(item);
+    return true;
   }
   return false;
 }
@@ -26,25 +30,22 @@ Array.prototype.pushUnique = Array.prototype.pushUnique || function (item) {
  * @param {Object} paramObj 数据
  * @return {String} 返回解释后的字符串
  */
-var templates = {
-  'js': '<script $attributes$ src="$src$"></script>',
-  'css': '<link $attributes$ href="$src$"/>'
-};
+
 function parseTmpl(tmpl, paramObj) {
   paramObj = paramObj || paramObj;
 
   if (typeof tmpl === 'string') {
-      return tmpl.replace(/\$([_a-zA-Z0-9]*)\$/g, function (m, n) {
-          return typeof paramObj[n] === 'undefined' ? '' : paramObj[n];
-      });
+    return tmpl.replace(/\$([_a-zA-Z0-9]*)\$/g, function (m, n) {
+      return typeof paramObj[ n ] === 'undefined' ? '' : paramObj[ n ];
+    });
   } else {
-      return tmpl;
+    return tmpl;
   }
 }
 
-var arrayMerge = function(arr1, arr2){
-  for (var i = 0, len = arr2.length; i < len; i++){
-      arr1.pushUnique(arr2[ i ]);
+var arrayMerge = function (arr1, arr2) {
+  for (var i = 0, len = arr2.length; i < len; i++) {
+    arr1.pushUnique(arr2[ i ]);
   }
 
   return arr1;
@@ -60,9 +61,9 @@ function parseAttributes(attrStr) {
   var match;
 
   if (attrStr) {
-      while (match = reAttributes.exec(attrStr)) {
-          result[match[1]] = match[2] || true;
-      }
+    while (match = reAttributes.exec(attrStr)) {
+      result[ match[ 1 ] ] = match[ 2 ] || true;
+    }
   }
 
   return result;
@@ -79,9 +80,9 @@ function getTags(rawHtml, reTag) {
   var match, attributes;
 
   while (match = reTag.exec(rawHtml)) {
-      attributes = parseAttributes(match[2] || '');
+    attributes = parseAttributes(match[ 2 ] || '');
 
-      result.push({ name: match[1], attributes: attributes, raw: match[0] });
+    result.push({ name: match[ 1 ], attributes: attributes, raw: match[ 0 ] });
   }
 
   return result;
@@ -89,31 +90,31 @@ function getTags(rawHtml, reTag) {
 
 
 
-function generateCombinedFile(type, files, attributes) {
-  // debugger;
-  if (!files.length) {
-      return '';
-  }
-  var attrStr = [];
-  var filesMaxIdx = files.length - 1;
+// function generateCombinedFile(type, files, attributes) {
+//   // debugger;
+//   if (!files.length) {
+//     return '';
+//   }
+//   var attrStr = [];
+//   var filesMaxIdx = files.length - 1;
 
-  attributes = extend(true, {}, attributes);
-  delete attributes.src;
-  delete attributes.href;
+//   attributes = extend(true, {}, attributes);
+//   delete attributes.src;
+//   delete attributes.href;
 
-  var arrFiles = files;
-
-
-  for (var attrName in attributes) {
-      attrStr.push(attrName + '="' + attributes[attrName] + '"');
-  }
+//   var arrFiles = files;
 
 
-  var url = this.options.combUrlPre + this._getComboUrl(arrFiles);
+//   for (var attrName in attributes) {
+//     attrStr.push(attrName + '="' + attributes[ attrName ] + '"');
+//   }
 
-  // return parseTmpl(templates[type], { src: encodeURI(url), attributes: attrStr.join(' ') });
-  return parseTmpl(templates[type], { src: url, attributes: attrStr.join(' ') });
-};
+
+//   var url = this.options.combUrlPre + this._getComboUrl(arrFiles);
+
+//   // return parseTmpl(templates[type], { src: encodeURI(url), attributes: attrStr.join(' ') });
+//   return parseTmpl(templates[ type ], { src: url, attributes: attrStr.join(' ') });
+// };
 
 // 提取页面中的link和script标签链接的资源
 function extraLinkResource(rawHtml, type, key, fileId) {
@@ -142,7 +143,7 @@ function extraLinkResource(rawHtml, type, key, fileId) {
   var attributes = {};
   attributes[ key ] = packFile;
 
-  for (var i = 0, len = allMatchTags.length; i < len; i++){
+  for (var i = 0, len = allMatchTags.length; i < len; i++) {
     var tag = allMatchTags[ i ];
     var url = tag[ 'attributes' ][ key ];
 
@@ -150,8 +151,8 @@ function extraLinkResource(rawHtml, type, key, fileId) {
       continue;
     }
     // 网络连接的资源不做处理
-    if (url.indexOf('//') === 0 ||url.indexOf('http') === 0) {
-        continue;
+    if (url.indexOf('//') === 0 || url.indexOf('http') === 0) {
+      continue;
     }
 
     // link 只处理css/scss文件
@@ -167,10 +168,10 @@ function extraLinkResource(rawHtml, type, key, fileId) {
 
 
   return {
-      rawHtml: rawHtml,
-      arrLinkRes: arrLinkRes,
-      placeholder: placeholder,
-      packFile: packFile
+    rawHtml: rawHtml,
+    arrLinkRes: arrLinkRes,
+    placeholder: placeholder,
+    packFile: packFile
   };
 };
 
@@ -191,7 +192,7 @@ function extraContentDeps(content, fileId) {
   var ret = extraLinkResource(content, 'js', 'src', fileId);
   deps[ 'js' ] = {
     packFile: ret[ 'packFile' ] || '',
-    placeholder:ret[ 'placeholder' ] || '',
+    placeholder: ret[ 'placeholder' ] || '',
     arrLink: ret[ 'arrLinkRes' ] || []
   }
   content = ret[ 'rawHtml' ];
@@ -221,57 +222,57 @@ function getWidgetDeps(w, map) {
   // var arrJsMod = [];
   // var arrWidgetConf = [];
   function buildDeps(arrDeps) {
-      arrDeps.forEach(function (deps) {
-          var depsId = deps, vmPath;
+    arrDeps.forEach(function (deps) {
+      var depsId = deps, vmPath;
 
-          var depsObj = map[depsId];
-          if (!depsObj) {
-            throw new Error(depsId + 'is not in map!!');
+      var depsObj = map[ depsId ];
+      if (!depsObj) {
+        throw new Error(depsId + 'is not in map!!');
+      }
+      var hisDeps = depsObj[ 'deps' ] || [];
+      if (hisDeps && hisDeps.length) {
+        buildDeps(hisDeps);
+      }
+
+      var type = depsObj.type;
+      // var uri = depsObj.uri;
+
+      switch (type) {
+        // case 'vm':
+
+        //     // 检查deps中的js，添加到arrJsMod里
+        //     // arrJsMod中只放每一个vm同名依赖的js模块，它的依赖已经Dep中提前加载了
+        //     // var depsIdPre = depsId.replace(/(.*?)(\.vm)$/, '$1');
+        //     // hisDeps.map(function (item) {
+        //     //     if (item === depsIdPre + '.js') {
+        //     //         var modId = map[item] && map[item]['extras']['moduleId'];
+        //     //         arrJsMod.push({
+        //     //             moduleId: '"' + modId + '"',
+        //     //             widgetId: deps.idf
+        //     //         });
+        //     //     }
+        //     // });
+
+        //     break;
+        case 'js':
+          if (!~arrPackedJs.indexOf(depsId)) {
+            arrDepJs.pushUnique(depsId);
           }
-          var hisDeps = depsObj['deps'] || [];
-          if (hisDeps && hisDeps.length) {
-              buildDeps(hisDeps);
+          break;
+        case 'css':
+          if (!~arrPackedCss.indexOf(depsId)) {
+            arrDepCss.pushUnique(depsId);
           }
-
-          var type = depsObj.type;
-          // var uri = depsObj.uri;
-
-          switch (type) {
-              // case 'vm':
-
-              //     // 检查deps中的js，添加到arrJsMod里
-              //     // arrJsMod中只放每一个vm同名依赖的js模块，它的依赖已经Dep中提前加载了
-              //     // var depsIdPre = depsId.replace(/(.*?)(\.vm)$/, '$1');
-              //     // hisDeps.map(function (item) {
-              //     //     if (item === depsIdPre + '.js') {
-              //     //         var modId = map[item] && map[item]['extras']['moduleId'];
-              //     //         arrJsMod.push({
-              //     //             moduleId: '"' + modId + '"',
-              //     //             widgetId: deps.idf
-              //     //         });
-              //     //     }
-              //     // });
-
-              //     break;
-              case 'js':
-                  if (!~arrPackedJs.indexOf(depsId)) {
-                    arrDepJs.pushUnique(depsId);
-                  }
-                  break;
-              case 'css':
-                  if (!~arrPackedCss.indexOf(depsId)) {
-                    arrDepCss.pushUnique(depsId);
-                  }
-                  break;
-              default:
-                  break;
-          } //end of switch
-      }); //end of forEach
+          break;
+        default:
+          break;
+      } //end of switch
+    }); //end of forEach
 
   }
 
   if (!Array.isArray(w)) {
-      w = [w];
+    w = [ w ];
   }
   buildDeps(w);
 
@@ -282,21 +283,26 @@ function getWidgetDeps(w, map) {
 
 }
 
+// hasPackedPage 只对构建过的layout进行标记
 var hasPackedPage = {};
-var haspackedRes = {};
+// 记录每一个page依赖的layout
 var layoutMap = {};
+// id是依赖的资源的id,value是个数组，存放资源被打包的layout的id，只标记layout文件依赖的资源
 var mergedMap = {};
 
-function packItem(ret, fileId) {
+function packPage(ret, fileId) {
+  console.log('packPage %s', fileId);
   var isLayout;
   if (/^page\/layout\/(?:.+)/.test(fileId)) {
     isLayout = true;
   }
+
   if (isLayout && hasPackedPage[ fileId ]) {
+    console.log('%s has packed！', fileId);
     return;
   }
-  console.log('packItem %s', fileId);
-  var resMap = ret[ 'map' ]['res'];
+
+  var resMap = ret[ 'map' ][ 'res' ];
   var thisMap = resMap[ fileId ];
   // find depend layout
   var arrRequire = thisMap[ 'deps' ] || [];
@@ -307,6 +313,7 @@ function packItem(ret, fileId) {
 
 
   arrRequire.forEach(function (depItem, ind) {
+    // 把page的layout添加到layoutMap中
     if (/^page\/layout\/(?:.+)/.test(depItem)) {
       depLayout = depItem;
       if (!layoutMap[ fileId ]) {
@@ -330,7 +337,7 @@ function packItem(ret, fileId) {
 
   var arrAsyncJs = [];
   var arrAsyncCss = [];
-  var arrAsync = (resMap[fileId][ 'extras' ] && resMap[fileId][ 'extras' ][ 'async' ]) || [];
+  var arrAsync = (resMap[ fileId ][ 'extras' ] && resMap[ fileId ][ 'extras' ][ 'async' ]) || [];
   arrAsync.forEach(function (asyncItem) {
     if (/\.(css|scss)$/.test(asyncItem)) {
       arrAsyncCss.push(asyncItem);
@@ -341,11 +348,13 @@ function packItem(ret, fileId) {
     }
   });
 
-  console.log('dep Layout:%s', depLayout || 'none');
+  console.log('%s depend Layout:%s', fileId, depLayout || 'none');
   if (depLayout) {
     arrRequire.splice(layoutInd, 1);
     if (!hasPackedPage[ depLayout ]) {
-      packItem(ret, depLayout);
+      packPage(ret, depLayout);
+    } else {
+      console.log('%s has packed！', depLayout);
     }
 
     if (layoutMap[ depLayout ]) {
@@ -359,12 +368,12 @@ function packItem(ret, fileId) {
   //合并所有的依赖
   var deps = {};
   deps[ 'js' ] = {};
-  deps[ 'js' ][ 'arrRequires' ] = [].concat(wDeps['arrDepJs'],arrRequireJs);
+  deps[ 'js' ][ 'arrRequires' ] = [].concat(wDeps[ 'arrDepJs' ], arrRequireJs);
   deps[ 'js' ][ 'arrAsync' ] = [].concat(arrAsyncJs);
 
   deps[ 'css' ] = {};
-  deps[ 'css' ][ 'arrRequires' ] = [].concat(wDeps['arrDepCss'],arrRequireCss);
-  deps[ 'css' ][ 'arrAsync' ] =  [].concat(arrAsyncCss);
+  deps[ 'css' ][ 'arrRequires' ] = [].concat(wDeps[ 'arrDepCss' ], arrRequireCss);
+  deps[ 'css' ][ 'arrAsync' ] = [].concat(arrAsyncCss);
 
 
 
@@ -386,8 +395,9 @@ function packItem(ret, fileId) {
   //     arrLink: []
   //   }
   // };
-  res[ 'deps' ][ 'js' ][ 'arrLink' ] = transformUrlToFileId(ret,res[ 'deps' ][ 'js' ][ 'arrLink' ]);
-  res[ 'deps' ][ 'css' ][ 'arrLink' ] = transformUrlToFileId(ret,res[ 'deps' ][ 'css' ][ 'arrLink' ]);
+  // 把页面中链接的css，js的url == fildId
+  res[ 'deps' ][ 'js' ][ 'arrLink' ] = transformUrlToFileId(ret, res[ 'deps' ][ 'js' ][ 'arrLink' ]);
+  res[ 'deps' ][ 'css' ][ 'arrLink' ] = transformUrlToFileId(ret, res[ 'deps' ][ 'css' ][ 'arrLink' ]);
   deps[ 'js' ] = extend(true, deps[ 'js' ], res[ 'deps' ][ 'js' ]);
   deps[ 'css' ] = extend(true, deps[ 'css' ], res[ 'deps' ][ 'css' ]);
 
@@ -396,13 +406,10 @@ function packItem(ret, fileId) {
   // 替换/合成文件，替换占位符
   // arrRequires,arrLink,arrAsync
   // js handle
-  var arrTmpMerge;
-  var placeholder;
-  var arrPackFile;
   [ 'js', 'css' ].forEach(function (resType) {
-    arrTmpMerge = [];
-    arrPackFile = [];
-    placeholder = deps[ resType ][ 'placeholder' ];
+    var arrRes = [];
+    var placeholder = deps[ resType ][ 'placeholder' ];
+    var packFilePath = deps[ resType ][ 'packFile' ];
     if (placeholder) {
       [].concat(
         deps[ resType ][ 'arrRequires' ],
@@ -416,17 +423,7 @@ function packItem(ret, fileId) {
           }
           var uri, url;
           // dev mode:insert all url
-          if (env !== 'prod') {
-            uri = resMap[ resId ][ 'uri' ];
-          } else {
-            arrPackFile.push(resId);
-            var packFilePath = deps[ resType ][ 'packFile' ];
-            uri = createPkg(arrPackFile, packFilePath, ret);
-          }
-
-          url = parseTmpl(templates[ resType ], { src: uri, attributes: resType === 'css' ? 'rel="stylesheet"' : '' });
-          arrTmpMerge.push(url);
-
+          arrRes.push(resId);
           if (isLayout) {
             if (mergedMap[ resId ]) {
               mergedMap[ resId ].push(fileId);
@@ -436,10 +433,12 @@ function packItem(ret, fileId) {
           }
         });
 
-      var strTmpMerge = arrTmpMerge.join('\n');
-
-      console.log('merge res is %s', strTmpMerge);
-      content = content.replace(placeholder, strTmpMerge);
+      var strPackUrl = '';
+      if (arrRes.length) {
+        strPackUrl = getPackUrl(env, arrRes, resType, packFilePath, ret);
+      }
+      // console.log('replace %s with %s', placeholder, strPackUrl);
+      content = content.replace(placeholder, strPackUrl);
     };
   });
 
@@ -453,6 +452,30 @@ function packItem(ret, fileId) {
   file.setContent(content);
 }
 
+// 根据依赖的资源arrRes，prod模式返回打包后的url;非prod模式，返回所有资源的url的链接
+function getPackUrl(env, arrRes, resType, packFilePath, ret) {
+  var resMap = ret[ 'map' ][ 'res' ];
+  var arrDevUrl = [];
+  var uri, url;
+  var strPackUrl = '';
+  if (env !== 'prod') {
+    arrRes.forEach(function (resId) {
+      uri = resMap[ resId ][ 'uri' ];
+      url = parseTmpl(options['templates'][ resType ], { src: uri, attributes: resType === 'css' ? 'rel="stylesheet"' : '' });
+      arrDevUrl.push(url);
+    });
+    strPackUrl = arrDevUrl.join('\n');
+    // console.log('pack %s', JSON.stringify(arrRes, null, 4));
+  } else {
+    // console.log('pack %s into %s', JSON.stringify(arrRes, null, 4), packFilePath);
+    uri = createPkg(arrRes, packFilePath, ret);
+    strPackUrl = parseTmpl(options['templates'][ resType ], { src: uri, attributes: resType === 'css' ? 'rel="stylesheet"' : '' });
+  }
+  console.log('pack url: %s', strPackUrl);
+  return strPackUrl;
+}
+
+// 把arrPack中的资源，打包到packFilePath，返回打包后的pkg的url
 var pidCount = 0;
 function createPkg(arrPack, packFilePath, ret) {
   var root = fis.project.getProjectPath();
@@ -470,7 +493,6 @@ function createPkg(arrPack, packFilePath, ret) {
   var requireMap = {};
 
   arrPack.forEach(function (id) {
-    console.log('------------%s',id)
     var file = ret[ 'ids' ][ id ];
 
     if (ret.map.res[ id ]) {
@@ -529,7 +551,8 @@ function createPkg(arrPack, packFilePath, ret) {
   return pkg.getUrl();
 }
 
-function transformUrlToFileId(ret,arr) {
+// 把url转成fileId
+function transformUrlToFileId(ret, arr) {
   var urlmapping = ret.urlmapping;
   var ret = [];
   arr.forEach(function (url) {
@@ -555,48 +578,47 @@ function isPackedInLayout(arrLayout, arrDepLayout) {
   return ret;
 }
 
-// arrTodo 数组里面是subpath的数组
+//
+var packOpt;
+var packSetting;
 var env = 'dev';
-function packAll(arrTodo, ret, settings) {
+function init(settings, opt) {
   env = settings.env || env;
-  var files = ret.src;
-  var packed = {};
-
-  // arrTodo = [ '/page/layout/frame.vm', '/page/index.vm' ];
-  arrTodo.forEach(function (subpath) {
-    console.log(subpath);
-    var file = files[ subpath ];
-    packItem(ret, file.id);
-  });
-
-  console.log('layoutMap:%s', JSON.stringify(layoutMap, null, 4));
+  packSetting = settings;
+  packOpt = opt;
 }
 
+function clear() {
 
-var packOpt;
+}
 module.exports = function (ret, pack, settings, opt) {
+  console.log('begin djvm-pack ...');
+  init(settings, opt);
+
   var files = ret.src;
-  packOpt = opt;
   // 生成url map 表
   var urlmapping = ret.urlmapping = {};
-  Object.keys(files).forEach(function(subpath) {
-    var file = files[subpath];
+  Object.keys(files).forEach(function (subpath) {
+    var file = files[ subpath ];
     if (file.release) {
-      urlmapping[file.getUrl()] = file;
+      urlmapping[ file.getUrl() ] = file;
     }
   });
 
-  // 忽略 packTo 信息，直接从 settings 中读取。
   debugger;
-  // var src = ret.src;
-  // var sources = [];
-  // var packed = {}; // cache all packed resource.
-  // var ns = fis.config.get('namespace');
-  // var connector = fis.config.get('namespaceConnector', ':');
-  // var root = fis.project.getProjectPath();
 
-  var arrTodo = [];
+  var list = [];
 
+  // 先处理frame layout
+  if (settings[ 'layout' ] && settings[ 'layout' ][ 'frame' ]) {
+    var frameLayoutId = settings[ 'layout' ][ 'frame' ];
+    if (ret['ids'][frameLayoutId] ) {
+      packPage(ret, frameLayoutId);
+    }
+
+  }
+
+  // 收集和处理page/*.vm文件
   Object.keys(files).forEach(function (subpath) {
     var file = files[ subpath ];
     var regPagePath = /^page\/(.*?)\.vm$/;
@@ -605,40 +627,12 @@ module.exports = function (ret, pack, settings, opt) {
       return;
     }
 
-    // console.info('push file:%s ', fileId);
-    arrTodo.push(subpath);
-    // var fileId = file.id;
-    // var content = file.getContent();
-
-    // var isLayout = false;
-    // var regLayout = /#extends\(("|')(\/?page\/layout\/.*?)\.vm\1\s*(("|')var:tplType=("|')(.*?)\5\4)?(?:.*?)\)/;
-    // var match = content.match(regLayout);
-    // if (!match) {
-    //   isLayout = true;
-    // }
-
-
-      // var conf = {
-      //   // isLayout: isLayout,
-      //   fileId: fileId,
-      //   map: ret.map[ 'res' ]
-
-      // };
-
-      // content = packDeps(content, conf);
-
-
-
-      // file.setContent(content);
+    // pack this page
+    packPage(ret, file.id);
 
   });
 
-  // 把frame layout 添加到数组的第一位
-  if (settings[ 'layout' ] && settings[ 'layout' ][ 'frame' ]) {
-    arrTodo.unshift(settings[ 'layout' ][ 'frame' ]);
-  }
-
-  packAll(arrTodo, ret, settings);
-
+  console.log('layoutMap:%s', JSON.stringify(layoutMap, null, 4));
+  console.log('mergedMap:%s', JSON.stringify(mergedMap, null, 4));
 };
 
