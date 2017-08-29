@@ -215,8 +215,8 @@ function extraContentDeps(content, fileId) {
 var arrPackedCss = [];
 var arrPackedJs = [];
 
-function getWidgetDeps(w, map) {
-  // console.info('_getWidgetDeps ...');
+function getDeps(w, map) {
+  // console.info('_getDeps ...');
   var arrDepJs = [];
   var arrDepCss = [];
   // var arrJsMod = [];
@@ -363,16 +363,19 @@ function packPage(ret, fileId) {
   }
 
   // 分析依赖的widget依赖的css和js
-  var wDeps = getWidgetDeps(arrRequireWidget, resMap);
+  var widgetDeps = getDeps(arrRequireWidget, resMap);
+  var reqJsDeps = getDeps(arrRequireJs, resMap);
+  var asyncJsDeps = getDeps(arrAsyncJs, resMap);
+  var reqCssDeps = getDeps(arrRequireCss, resMap);
 
   //合并所有的依赖
   var deps = {};
   deps[ 'js' ] = {};
-  deps[ 'js' ][ 'arrRequires' ] = [].concat(wDeps[ 'arrDepJs' ], arrRequireJs);
-  deps[ 'js' ][ 'arrAsync' ] = [].concat(arrAsyncJs);
+  deps[ 'js' ][ 'arrRequires' ] = [].concat(widgetDeps[ 'arrDepJs' ], reqJsDeps['arrDepJs']);
+  deps[ 'js' ][ 'arrAsync' ] = [].concat(asyncJsDeps['arrDepJs']);
 
   deps[ 'css' ] = {};
-  deps[ 'css' ][ 'arrRequires' ] = [].concat(wDeps[ 'arrDepCss' ], arrRequireCss);
+  deps[ 'css' ][ 'arrRequires' ] = [].concat(widgetDeps[ 'arrDepCss' ], reqJsDeps['arrDepCss'], asyncJsDeps['arrDepCss'], reqCssDeps['arrDepCss']);
   deps[ 'css' ][ 'arrAsync' ] = [].concat(arrAsyncCss);
 
 
@@ -418,7 +421,7 @@ function packPage(ret, fileId) {
         .forEach(function (resId) {
           if (mergedMap[ resId ] && layoutMap[ fileId ] && isPackedInLayout(mergedMap[ resId ], layoutMap[ fileId ])) {
             // 如果该资源已经被打包在页面继承的layout中，则跳过该资源
-            console.warn('%s has packed in layout', resId);
+            // console.warn('%s has packed in layout', resId);
             return;
           }
           var uri, url;
