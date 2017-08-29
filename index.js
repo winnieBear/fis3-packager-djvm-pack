@@ -1,6 +1,7 @@
 var path = require('path');
 var _ = fis.util;
 var extend = require('extend');
+var arrayUniq = require('array-uniq');
 
 var options = {
   selectors: {
@@ -238,22 +239,6 @@ function getDeps(w, map) {
       // var uri = depsObj.uri;
 
       switch (type) {
-        // case 'vm':
-
-        //     // 检查deps中的js，添加到arrJsMod里
-        //     // arrJsMod中只放每一个vm同名依赖的js模块，它的依赖已经Dep中提前加载了
-        //     // var depsIdPre = depsId.replace(/(.*?)(\.vm)$/, '$1');
-        //     // hisDeps.map(function (item) {
-        //     //     if (item === depsIdPre + '.js') {
-        //     //         var modId = map[item] && map[item]['extras']['moduleId'];
-        //     //         arrJsMod.push({
-        //     //             moduleId: '"' + modId + '"',
-        //     //             widgetId: deps.idf
-        //     //         });
-        //     //     }
-        //     // });
-
-        //     break;
         case 'js':
           if (!~arrPackedJs.indexOf(depsId)) {
             arrDepJs.pushUnique(depsId);
@@ -371,11 +356,11 @@ function packPage(ret, fileId) {
   //合并所有的依赖
   var deps = {};
   deps[ 'js' ] = {};
-  deps[ 'js' ][ 'arrRequires' ] = [].concat(widgetDeps[ 'arrDepJs' ], reqJsDeps['arrDepJs']);
+  deps[ 'js' ][ 'arrRequires' ] = arrayUniq([].concat(widgetDeps[ 'arrDepJs' ], reqJsDeps['arrDepJs']));
   deps[ 'js' ][ 'arrAsync' ] = [].concat(asyncJsDeps['arrDepJs']);
 
   deps[ 'css' ] = {};
-  deps[ 'css' ][ 'arrRequires' ] = [].concat(widgetDeps[ 'arrDepCss' ], reqJsDeps['arrDepCss'], asyncJsDeps['arrDepCss'], reqCssDeps['arrDepCss']);
+  deps[ 'css' ][ 'arrRequires' ] = arrayUniq([].concat(widgetDeps[ 'arrDepCss' ], reqJsDeps['arrDepCss'], asyncJsDeps['arrDepCss'], reqCssDeps['arrDepCss']));
   deps[ 'css' ][ 'arrAsync' ] = [].concat(arrAsyncCss);
 
 
@@ -426,12 +411,14 @@ function packPage(ret, fileId) {
           }
           var uri, url;
           // dev mode:insert all url
-          arrRes.push(resId);
-          if (isLayout) {
-            if (mergedMap[ resId ]) {
-              mergedMap[ resId ].push(fileId);
-            } else {
-              mergedMap[ resId ] = [ fileId ];
+          if (arrRes.indexOf(resId) === -1) {
+            arrRes.push(resId);
+            if (isLayout) {
+              if (mergedMap[ resId ]) {
+                mergedMap[ resId ].push(fileId);
+              } else {
+                mergedMap[ resId ] = [ fileId ];
+              }
             }
           }
         });

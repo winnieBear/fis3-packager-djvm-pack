@@ -1,6 +1,6 @@
 {
   "name": "fis3-packager-djvm-pack",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "fis3-packager-djvm-pack",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,9 @@
   "keywords": [
     "fis3-packager-djvm-pack"
   ],
+  "dependencies": {
+    "array-uniq": "1.0.3"
+  },
   "author": "fengyang321@gmail.com",
   "license": "ISC",
   "bugs": {
