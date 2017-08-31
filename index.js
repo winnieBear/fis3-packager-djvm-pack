@@ -89,34 +89,6 @@ function getTags(rawHtml, reTag) {
   return result;
 }
 
-
-
-// function generateCombinedFile(type, files, attributes) {
-//   // debugger;
-//   if (!files.length) {
-//     return '';
-//   }
-//   var attrStr = [];
-//   var filesMaxIdx = files.length - 1;
-
-//   attributes = extend(true, {}, attributes);
-//   delete attributes.src;
-//   delete attributes.href;
-
-//   var arrFiles = files;
-
-
-//   for (var attrName in attributes) {
-//     attrStr.push(attrName + '="' + attributes[ attrName ] + '"');
-//   }
-
-
-//   var url = this.options.combUrlPre + this._getComboUrl(arrFiles);
-
-//   // return parseTmpl(templates[type], { src: encodeURI(url), attributes: attrStr.join(' ') });
-//   return parseTmpl(templates[ type ], { src: url, attributes: attrStr.join(' ') });
-// };
-
 // 提取页面中的link和script标签链接的资源
 function extraLinkResource(rawHtml, type, key, fileId) {
   var arrLinkRes = [];
@@ -581,8 +553,16 @@ function init(settings, opt) {
 function clear() {
 
 }
+
+function addSlush(content) {
+  // #extends("/page/layout/common.vm") 被fis替换之后，变成#extends("page/layout/common.vm")，page之前的/被去掉了，需要重新加上
+  var reg = /(#(?:extends|widget|parse)\(("|'))((?:(?:page\/layout)|widget)\/.*?\.vm\2\))/g;
+  return content.replace(reg, "$1/$3");
+}
+
 module.exports = function (ret, pack, settings, opt) {
-  console.log('begin djvm-pack ...');
+  debugger;
+  console.log('\nbegin djvm-pack ...');
   init(settings, opt);
 
   var files = ret.src;
@@ -594,10 +574,6 @@ module.exports = function (ret, pack, settings, opt) {
       urlmapping[ file.getUrl() ] = file;
     }
   });
-
-  debugger;
-
-  var list = [];
 
   // 先处理frame layout
   if (settings[ 'layout' ] && settings[ 'layout' ][ 'frame' ]) {
@@ -611,14 +587,19 @@ module.exports = function (ret, pack, settings, opt) {
   // 收集和处理page/*.vm文件
   Object.keys(files).forEach(function (subpath) {
     var file = files[ subpath ];
+    var regWidgetPath = /^widget\/(.*?)\.vm$/;
     var regPagePath = /^page\/(.*?)\.vm$/;
     // 如果不是模板文件或不是在page目录下面，直接跳过
-    if (!file.isHtmlLike || !regPagePath.test(file.id)) {
-      return;
+    if (regPagePath.test(file.id)) {
+       // pack this page
+      packPage(ret, file.id);
+      file.setContent(addSlush(file.getContent()));
+    } else {
+      if (file.isHtmlLike && regWidgetPath.test(file.id)) {
+        // 如果是widget里面的vm
+        file.setContent(addSlush(file.getContent()));
+      }
     }
-
-    // pack this page
-    packPage(ret, file.id);
 
   });
 
