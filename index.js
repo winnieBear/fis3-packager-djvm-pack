@@ -431,6 +431,11 @@ function getPackUrl(env, arrRes, resType, packFilePath, ret) {
   } else {
     // console.log('pack %s into %s', JSON.stringify(arrRes, null, 4), packFilePath);
     uri = createPkg(arrRes, packFilePath, ret);
+    // console.log(uri);
+    if (typeof packSetting.getReleaseUrl === 'function') {
+      uri = packSetting.getReleaseUrl(uri);
+      // console.log('release uri:%s', uri);
+    }
     strPackUrl = parseTmpl(options['templates'][ resType ], { src: uri, attributes: resType === 'css' ? 'rel="stylesheet"' : '' });
   }
   // console.log('pack url: %s', strPackUrl);
