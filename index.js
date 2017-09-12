@@ -82,7 +82,9 @@ function getTags(rawHtml, reTag) {
 
   while (match = reTag.exec(rawHtml)) {
     attributes = parseAttributes(match[ 2 ] || '');
-
+    if (attributes[ 'data-outlink' ]) {
+      continue;
+    }
     result.push({ name: match[ 1 ], attributes: attributes, raw: match[ 0 ] });
   }
 
