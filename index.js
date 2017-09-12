@@ -404,9 +404,6 @@ function packPage(ret, fileId) {
     };
   });
 
-
-
-
   if (isLayout) {
     hasPackedPage[ fileId ] = true;
   }
@@ -561,7 +558,7 @@ function clear() {
 
 function addSlush(content) {
   // #extends("/page/layout/common.vm") 被fis替换之后，变成#extends("page/layout/common.vm")，page之前的/被去掉了，需要重新加上
-  var reg = /(#(?:extends|widget|parse)\(("|'))((?:(?:page\/layout)|widget)\/.*?\.vm\2\))/g;
+  var reg = /(#(?:extends|widget|parse)\(("|'))((?:(?:page\/layout)|widget)\/.*?\.vm\2.*?\))/g;
   return content.replace(reg, "$1/$3");
 }
 
